@@ -140,7 +140,7 @@ body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);c
     <input type="number" id="yieldInput" value="4.5" min="1" max="10" step="0.1" oninput="render()">
   </div>
   <div class="setting">
-    <label>1回購入額(万円)</label>
+    <label>SBI銘柄購入額(万円)</label>
     <input type="number" id="amountInput" value="5" min="1" max="100" step="1" oninput="render()">
   </div>
 </div>
@@ -175,7 +175,8 @@ const STOCKS = [
     "note": "記念配当55円含む(通常50円)",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 6000
   },
   {
     "code": "3076",
@@ -189,7 +190,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "8130",
@@ -203,7 +205,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 6000
   },
   {
     "code": "2659",
@@ -217,7 +220,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "3333",
@@ -231,7 +235,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "4008",
@@ -245,7 +250,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 6000
   },
   {
     "code": "4042",
@@ -259,7 +265,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "4097",
@@ -273,7 +280,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": 0.0359
+    "pdfYield": 0.0359,
+    "investAmount": 9000
   },
   {
     "code": "4958",
@@ -287,7 +295,8 @@ const STOCKS = [
     "note": "★今月新規追加",
     "removed": false,
     "isNew": true,
-    "pdfYield": 0.0347
+    "pdfYield": 0.0347,
+    "investAmount": 6000
   },
   {
     "code": "8309",
@@ -301,7 +310,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "8725",
@@ -315,7 +325,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "8584",
@@ -329,7 +340,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "6785",
@@ -343,7 +355,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "7723",
@@ -357,7 +370,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "3231",
@@ -371,7 +385,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "3003",
@@ -385,7 +400,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "2169",
@@ -399,7 +415,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "9757",
@@ -413,7 +430,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 6000
   },
   {
     "code": "9769",
@@ -427,7 +445,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "4641",
@@ -441,7 +460,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 6000
   },
   {
     "code": "3817",
@@ -455,7 +475,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 6000
   },
   {
     "code": "3901",
@@ -469,7 +490,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 6000
   },
   {
     "code": "4674",
@@ -483,7 +505,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 6000
   },
   {
     "code": "4746",
@@ -497,7 +520,8 @@ const STOCKS = [
     "note": "★今月新規追加",
     "removed": false,
     "isNew": true,
-    "pdfYield": 0.0408
+    "pdfYield": 0.0408,
+    "investAmount": 6000
   },
   {
     "code": "2003",
@@ -511,7 +535,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "1928",
@@ -525,7 +550,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "6345",
@@ -539,7 +565,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "9364",
@@ -553,7 +580,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "9381",
@@ -567,7 +595,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "7989",
@@ -581,7 +610,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 6000
   },
   {
     "code": "7820",
@@ -595,7 +625,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 6000
   },
   {
     "code": "7994",
@@ -609,7 +640,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "4540",
@@ -623,7 +655,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 9000
   },
   {
     "code": "1343",
@@ -637,7 +670,8 @@ const STOCKS = [
     "note": "直近12ヶ月分配金実績",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": 39000
   },
   {
     "code": "1414",
@@ -651,7 +685,8 @@ const STOCKS = [
     "note": "ポートフォリオ除外済",
     "removed": true,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "1951",
@@ -665,7 +700,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "2124",
@@ -679,7 +715,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "2296",
@@ -693,7 +730,8 @@ const STOCKS = [
     "note": "記念配当込320円/通常145円",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "2393",
@@ -707,7 +745,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "3834",
@@ -721,7 +760,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "4205",
@@ -735,7 +775,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "4248",
@@ -749,7 +790,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "4719",
@@ -763,7 +805,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "4972",
@@ -777,7 +820,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "5388",
@@ -791,7 +835,8 @@ const STOCKS = [
     "note": "ポートフォリオ除外済",
     "removed": true,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "6073",
@@ -805,7 +850,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "6432",
@@ -819,7 +865,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "6458",
@@ -833,7 +880,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "7438",
@@ -847,7 +895,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "8058",
@@ -861,7 +910,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "8593",
@@ -875,7 +925,8 @@ const STOCKS = [
     "note": "ポートフォリオ除外済",
     "removed": true,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "9303",
@@ -889,7 +940,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "9304",
@@ -903,7 +955,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "9513",
@@ -917,7 +970,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   },
   {
     "code": "9687",
@@ -931,7 +985,8 @@ const STOCKS = [
     "note": "",
     "removed": false,
     "isNew": false,
-    "pdfYield": null
+    "pdfYield": null,
+    "investAmount": null
   }
 ];
 
@@ -999,16 +1054,23 @@ function render() {
     const noteHtml = s.note
       ? `<div class="note">⚠︎ ${s.note}</div>` : '';
 
+    // 購入予算：PF銘柄はPDF投資額×5、SBI銘柄はグローバル設定
+    const budget = s.investAmount != null ? s.investAmount * 5 : purchaseAmt;
+    const budgetLabel = s.investAmount != null
+      ? `購入予算 ¥${fmt(budget)}（PDF ${fmt(s.investAmount)}×5）`
+      : `購入予算 ¥${fmt(budget)}`;
+
     // holdings bar (for purchased)
     const holdingsHtml = isPurchased && s.shares
       ? `<div class="holdings-bar">
            <span>📦 現在 <strong>${s.shares}株</strong> 保有</span>
            <span>取得単価 ¥${fmt(s.cost)}</span>
            <span>目標株価 ¥${fmt(targetPrice)}</span>
+           <span>${budgetLabel}</span>
          </div>`
       : (!isPurchased
           ? `<div class="holdings-bar" style="background:rgba(255,149,0,.06);color:#c45e00">
-               📌 未購入 ｜ 目標株価 ¥${fmt(targetPrice)} ｜ 年間配当 ¥${s.annualDiv}
+               📌 未購入 ｜ 目標株価 ¥${fmt(targetPrice)} ｜ 年間配当 ¥${s.annualDiv} ｜ ${budgetLabel}
              </div>`
           : '');
 
@@ -1016,8 +1078,8 @@ function render() {
     if (isPurchased) {
       const p1 = Math.round(s.cost * 0.8);
       const p2 = Math.round(targetPrice * 0.8);
-      const sh1 = calcShares(p1, purchaseAmt);
-      const sh2 = calcShares(p2, purchaseAmt);
+      const sh1 = calcShares(p1, budget);
+      const sh2 = calcShares(p2, budget);
       alertHtml = `
         <div class="alerts two">
           <div class="alert-cell">
@@ -1038,7 +1100,7 @@ function render() {
           </div>
         </div>`;
     } else {
-      const sh = calcShares(targetPrice, purchaseAmt);
+      const sh = calcShares(targetPrice, budget);
       alertHtml = `
         <div class="alerts one">
           <div class="alert-cell">
