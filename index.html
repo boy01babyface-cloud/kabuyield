@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="高配当アラート">
+<title>高配当株アラート確認</title>
+<style>
+:root{
+  --blue:#007AFF;--green:#34C759;--orange:#FF9500;--red:#FF3B30;
+  --gray:#8E8E93;--lightgray:#E5E5EA;--bg:#F2F2F7;
+  --card:#FFF;--text:#1C1C1E;--text2:#6C6C70;
+  --purchased:#EBF5EB;--unpurchased:#FFF8EE;--removed:#FFEEF0;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+
+/* ─── ヘッダー ─────────────────── */
+.hdr{background:var(--blue);color:#fff;padding:env(safe-area-inset-top,16px) 16px 10px;
+      position:sticky;top:0;z-index:200;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.hdr h1{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.hdr .sub{font-size:11px;opacity:.75;margin-top:2px}
+
+/* ─── 設定バー ─────────────────── */
+.settings{display:flex;gap:0;background:#fff;
+           border-bottom:1px solid var(--lightgray);
+           position:sticky;top:54px;z-index:190}
+.setting{flex:1;display:flex;flex-direction:column;align-items:center;
+          padding:8px 4px;border-right:1px solid var(--lightgray)}
+.setting:last-child{border-right:none}
+.setting label{font-size:10px;color:var(--gray);margin-bottom:4px}
+.setting input{border:1.5px solid var(--blue);border-radius:8px;
+                padding:5px 6px;font-size:15px;font-weight:600;
+                color:var(--blue);text-align:center;width:90px;background:var(--bg)}
+
+/* ─── フィルタータブ ────────────── */
+.tabs{display:flex;background:#fff;border-bottom:1px solid var(--lightgray);
+       padding:0 8px;gap:4px;overflow-x:auto;white-space:nowrap;
+       position:sticky;top:108px;z-index:180;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:none;background:none;padding:10px 10px 8px;font-size:12px;font-weight:600;
+      color:var(--gray);border-bottom:2px solid transparent;cursor:pointer}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* ─── 検索 ──────────────────────── */
+.search-wrap{padding:8px 12px;background:var(--bg);position:sticky;top:150px;z-index:170}
+.search-wrap input{
+  width:100%;background:#fff;border:none;border-radius:10px;
+  padding:8px 12px 8px 34px;font-size:15px;
+  box-shadow:0 1px 3px rgba(0,0,0,.1);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:10px center;
+}
+
+/* ─── カード ─────────────────────── */
+.cards{padding:4px 10px 100px}
+
+.card{background:var(--card);border-radius:14px;margin-bottom:10px;
+       overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 12px 6px}
+.card-left .code{font-size:11px;color:var(--gray);font-weight:600}
+.card-left .name{font-size:16px;font-weight:700;margin-top:1px;line-height:1.3}
+.card-left .meta{font-size:11px;color:var(--gray);margin-top:2px}
+.card-left .note{font-size:10px;color:var(--orange);margin-top:2px}
+.card-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+
+.badge{border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;white-space:nowrap}
+.b-purchased{background:#E8F5E9;color:#2E7D32}
+.b-unpurchased{background:#FFF3E0;color:#E65100}
+.b-removed{background:#FFEBEE;color:#C62828}
+.b-new{background:#E3F2FD;color:#0D47A1}
+
+.divider{height:1px;background:var(--lightgray);margin:0 12px}
+
+/* ─── アラートグリッド ──────────── */
+.alerts{display:grid}
+.alerts.two{grid-template-columns:1fr 1fr}
+.alerts.one{grid-template-columns:1fr}
+
+.alert-cell{padding:8px 12px;border-right:1px solid var(--lightgray)}
+.alert-cell:last-child{border-right:none}
+.a-label{font-size:10px;color:var(--gray);font-weight:600;margin-bottom:4px}
+.a-price{font-size:21px;font-weight:800;color:var(--red);letter-spacing:-.5px}
+.a-shares{margin-top:3px}
+.a-shares .qty{font-size:16px;font-weight:700;color:var(--blue)}
+.a-shares .total{font-size:11px;color:var(--text2)}
+
+/* ─── 保有情報バー ──────────────── */
+.holdings-bar{
+  background:rgba(52,199,89,.08);
+  padding:5px 12px;
+  font-size:11px;color:#2E7D32;
+  display:flex;gap:12px;align-items:center
+}
+
+/* ─── 空状態 ─────────────────────── */
+.empty{text-align:center;padding:60px 20px;color:var(--gray)}
+.empty .ico{font-size:36px;margin-bottom:8px}
+
+/* ─── フッター ───────────────────── */
+.footer{text-align:center;padding:16px;font-size:10px;color:var(--gray)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <h1>📊 高配当株アラート確認</h1>
+  <div class="sub" id="subtitle">2026年4月更新 ｜ 全55銘柄</div>
+</div>
+
+<div class="settings">
+  <div class="setting">
+    <label>目標利回り</label>
+    <input type="number" id="yieldInput" value="4.5" min="1" max="10" step="0.1" oninput="render()">
+  </div>
+  <div class="setting">
+    <label>1回購入額(万円)</label>
+    <input type="number" id="amountInput" value="5" min="1" max="100" step="1" oninput="render()">
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="setFilter('all',this)">すべて</button>
+  <button class="tab" onclick="setFilter('portfolio',this)">ポートフォリオ</button>
+  <button class="tab" onclick="setFilter('sbi_only',this)">SBI保有のみ</button>
+  <button class="tab" onclick="setFilter('unpurchased',this)">未購入</button>
+  <button class="tab" onclick="setFilter('purchased',this)">購入済</button>
+  <button class="tab" onclick="setFilter('removed',this)">除外済</button>
+</div>
+
+<div class="search-wrap">
+  <input type="search" id="searchInput" placeholder="コード・銘柄名で検索..." oninput="render()" autocomplete="off">
+</div>
+
+<div class="cards" id="cards"></div>
+<div class="footer">年間配当データ：kabutan.jp 2026年4月調査</div>
+
+<script>
+const STOCKS = [
+  {
+    "code": "9986",
+    "name": "蔵王産業",
+    "sector": "卸売",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 105,
+    "cost": 2406,
+    "shares": 12,
+    "note": "記念配当55円含む(通常50円)",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "3076",
+    "name": "あいHD",
+    "sector": "卸売",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 110,
+    "cost": 2159,
+    "shares": 14,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "8130",
+    "name": "サンゲツ",
+    "sector": "卸売",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 155,
+    "cost": 2795,
+    "shares": 11,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "2659",
+    "name": "サンエー",
+    "sector": "小売",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 125,
+    "cost": 2996,
+    "shares": 15,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "3333",
+    "name": "あさひ",
+    "sector": "小売",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 50,
+    "cost": 1349,
+    "shares": 33,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4008",
+    "name": "住友精化",
+    "sector": "化学",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 44,
+    "cost": 913,
+    "shares": 30,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4042",
+    "name": "東ソー",
+    "sector": "化学",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 100,
+    "cost": 1915,
+    "shares": 15,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4097",
+    "name": "高圧ガス工業",
+    "sector": "化学",
+    "inPortfolio": true,
+    "status": "unpurchased",
+    "annualDiv": 40,
+    "cost": null,
+    "shares": null,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4958",
+    "name": "長谷川香料",
+    "sector": "化学",
+    "inPortfolio": true,
+    "status": "unpurchased",
+    "annualDiv": 100,
+    "cost": null,
+    "shares": null,
+    "note": "★今月新規追加",
+    "removed": false,
+    "isNew": true
+  },
+  {
+    "code": "8309",
+    "name": "三井住友トラストG",
+    "sector": "銀行",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 170,
+    "cost": 3502,
+    "shares": 13,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "8725",
+    "name": "MS&AD",
+    "sector": "保険",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 155,
+    "cost": 2998,
+    "shares": 14,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "8584",
+    "name": "ジャックス",
+    "sector": "その他金融",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 200,
+    "cost": 3720,
+    "shares": 15,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "6785",
+    "name": "鈴木",
+    "sector": "電気機器",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 95,
+    "cost": 2764,
+    "shares": 15,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "7723",
+    "name": "愛知時計電機",
+    "sector": "精密機器",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 113,
+    "cost": 2673,
+    "shares": 17,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "3231",
+    "name": "野村不動産HD",
+    "sector": "不動産",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 40,
+    "cost": 826,
+    "shares": 52,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "3003",
+    "name": "ヒューリック",
+    "sector": "不動産",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 67,
+    "cost": 1349,
+    "shares": 21,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "2169",
+    "name": "CDS",
+    "sector": "サービス",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 74,
+    "cost": 1769,
+    "shares": 24,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "9757",
+    "name": "船井総研HD",
+    "sector": "サービス",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 48,
+    "cost": 1119,
+    "shares": 40,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "9769",
+    "name": "学究社",
+    "sector": "サービス",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 103,
+    "cost": 1977,
+    "shares": 15,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4641",
+    "name": "アルプス技研",
+    "sector": "サービス",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 108,
+    "cost": 2583,
+    "shares": 12,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "3817",
+    "name": "SRAホールディングス",
+    "sector": "情報・通信",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 190,
+    "cost": 3980,
+    "shares": 14,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "3901",
+    "name": "マークラインズ",
+    "sector": "情報・通信",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 58,
+    "cost": 1556,
+    "shares": 28,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4674",
+    "name": "クレスコ",
+    "sector": "情報・通信",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 58,
+    "cost": 1454,
+    "shares": 31,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4746",
+    "name": "東計電算",
+    "sector": "情報・通信",
+    "inPortfolio": true,
+    "status": "unpurchased",
+    "annualDiv": 173,
+    "cost": null,
+    "shares": null,
+    "note": "★今月新規追加",
+    "removed": false,
+    "isNew": true
+  },
+  {
+    "code": "2003",
+    "name": "日東富士製粉",
+    "sector": "食料品",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 70,
+    "cost": 1618,
+    "shares": 36,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "1928",
+    "name": "積水ハウス",
+    "sector": "建設",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 144,
+    "cost": 3583,
+    "shares": 12,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "6345",
+    "name": "アイチコーポレーション",
+    "sector": "機械",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 60,
+    "cost": 1348,
+    "shares": 33,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "9364",
+    "name": "上組",
+    "sector": "倉庫・運輸関連",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 185,
+    "cost": 5606,
+    "shares": 8,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "9381",
+    "name": "エーアイテイー",
+    "sector": "倉庫・運輸関連",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 100,
+    "cost": 2210,
+    "shares": 13,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "7989",
+    "name": "立川ブラインド工業",
+    "sector": "金属製品",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 120,
+    "cost": 2531,
+    "shares": 12,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "7820",
+    "name": "ニホンフラッシュ",
+    "sector": "その他製品",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 36,
+    "cost": 809,
+    "shares": 72,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "7994",
+    "name": "オカムラ",
+    "sector": "その他製品",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 104,
+    "cost": 1908,
+    "shares": 15,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4540",
+    "name": "ツムラ",
+    "sector": "医薬品",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 144,
+    "cost": 3462,
+    "shares": 14,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "1343",
+    "name": "NF・J-REIT ETF",
+    "sector": "J-REIT市場",
+    "inPortfolio": true,
+    "status": "purchased",
+    "annualDiv": 87.6,
+    "cost": 1767,
+    "shares": 129,
+    "note": "直近12ヶ月分配金実績",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "1414",
+    "name": "ショーボンドHD",
+    "sector": "建設",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 45.5,
+    "cost": 1219,
+    "shares": 36,
+    "note": "ポートフォリオ除外済",
+    "removed": true,
+    "isNew": false
+  },
+  {
+    "code": "1951",
+    "name": "エクシオグループ",
+    "sector": "情報・通信",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 66,
+    "cost": 1650,
+    "shares": 50,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "2124",
+    "name": "JAC",
+    "sector": "サービス",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 38,
+    "cost": 877,
+    "shares": 47,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "2296",
+    "name": "伊藤ハム米久HD",
+    "sector": "食料品",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 145,
+    "cost": 3775,
+    "shares": 11,
+    "note": "記念配当込320円/通常145円",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "2393",
+    "name": "日本ケア",
+    "sector": "サービス",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 72,
+    "cost": 1905,
+    "shares": 31,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "3834",
+    "name": "朝日ネット",
+    "sector": "情報・通信",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 25,
+    "cost": 642,
+    "shares": 70,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4205",
+    "name": "日本ゼオン",
+    "sector": "化学",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 72,
+    "cost": 1843,
+    "shares": 23,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4248",
+    "name": "竹本容器",
+    "sector": "その他製品",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 38,
+    "cost": 809,
+    "shares": 36,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4719",
+    "name": "アルファシステムズ",
+    "sector": "情報・通信",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 125,
+    "cost": 3520,
+    "shares": 12,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "4972",
+    "name": "綜研化学",
+    "sector": "化学",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 75,
+    "cost": 1654,
+    "shares": 27,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "5388",
+    "name": "クニミネ工業",
+    "sector": "ガラス・土石",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 40,
+    "cost": 1033,
+    "shares": 44,
+    "note": "ポートフォリオ除外済",
+    "removed": true,
+    "isNew": false
+  },
+  {
+    "code": "6073",
+    "name": "アサンテ",
+    "sector": "サービス",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 62,
+    "cost": 1504,
+    "shares": 30,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "6432",
+    "name": "竹内製作所",
+    "sector": "機械",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 210,
+    "cost": 4805,
+    "shares": 12,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "6458",
+    "name": "新晃工業",
+    "sector": "機械",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 50,
+    "cost": 1199,
+    "shares": 37,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "7438",
+    "name": "コンドーテック",
+    "sector": "金属製品",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 52,
+    "cost": 1305,
+    "shares": 22,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "8058",
+    "name": "三菱商事",
+    "sector": "卸売",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 110,
+    "cost": 2438,
+    "shares": 25,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "8593",
+    "name": "三菱HCキャピタル",
+    "sector": "その他金融",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 45,
+    "cost": 1006,
+    "shares": 30,
+    "note": "ポートフォリオ除外済",
+    "removed": true,
+    "isNew": false
+  },
+  {
+    "code": "9303",
+    "name": "住友倉庫",
+    "sector": "倉庫・運輸関連",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 103,
+    "cost": 2618,
+    "shares": 21,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "9304",
+    "name": "渋沢倉庫",
+    "sector": "倉庫・運輸関連",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 54,
+    "cost": 1136,
+    "shares": 9,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "9513",
+    "name": "Jパワー",
+    "sector": "電気・ガス",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 100,
+    "cost": 2355,
+    "shares": 24,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  },
+  {
+    "code": "9687",
+    "name": "KSK",
+    "sector": "情報・通信",
+    "inPortfolio": false,
+    "status": "purchased",
+    "annualDiv": 168,
+    "cost": 4380,
+    "shares": 7,
+    "note": "",
+    "removed": false,
+    "isNew": false
+  }
+];
+
+let currentFilter = 'all';
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function fmt(n) {
+  return Math.round(n).toLocaleString('ja-JP');
+}
+
+function calcShares(price, amount) {
+  return Math.max(1, Math.round(amount / price));
+}
+
+function render() {
+  const targetYield = parseFloat(document.getElementById('yieldInput').value) / 100 || 0.045;
+  const purchaseAmt  = parseFloat(document.getElementById('amountInput').value) * 10000 || 50000;
+  const q = document.getElementById('searchInput').value.toLowerCase();
+
+  let stocks = STOCKS.filter(s => {
+    const matchSearch = !q || s.code.includes(q) || s.name.toLowerCase().includes(q) ||
+                        s.sector.toLowerCase().includes(q);
+    if (!matchSearch) return false;
+    switch (currentFilter) {
+      case 'portfolio':   return s.inPortfolio;
+      case 'sbi_only':    return !s.inPortfolio;
+      case 'unpurchased': return s.status === 'unpurchased';
+      case 'purchased':   return s.status === 'purchased' && !s.removed;
+      case 'removed':     return s.removed;
+      default:            return true;
+    }
+  });
+
+  const cards = document.getElementById('cards');
+  if (stocks.length === 0) {
+    cards.innerHTML = '<div class="empty"><div class="ico">🔍</div>該当する銘柄がありません</div>';
+    return;
+  }
+
+  cards.innerHTML = stocks.map(s => {
+    const targetPrice = Math.round(s.annualDiv / targetYield);
+    const isPurchased = s.status === 'purchased';
+
+    // badge
+    let badgeHtml = '';
+    if (s.removed) badgeHtml += '<span class="badge b-removed">除外済</span>';
+    else if (s.isNew) badgeHtml += '<span class="badge b-new">★新規</span>';
+    else if (isPurchased) badgeHtml += '<span class="badge b-purchased">購入済</span>';
+    else badgeHtml += '<span class="badge b-unpurchased">未購入</span>';
+
+    // portfolio badge
+    const pfBadge = s.inPortfolio
+      ? '<span class="badge" style="background:#EDE7F6;color:#4527A0">PF</span>'
+      : '<span class="badge" style="background:#F3F3F3;color:#777">SBI</span>';
+
+    const noteHtml = s.note
+      ? `<div class="note">⚠︎ ${s.note}</div>` : '';
+
+    // holdings bar (for purchased)
+    const holdingsHtml = isPurchased && s.shares
+      ? `<div class="holdings-bar">
+           <span>📦 現在 <strong>${s.shares}株</strong> 保有</span>
+           <span>取得単価 ¥${fmt(s.cost)}</span>
+           <span>目標株価 ¥${fmt(targetPrice)}</span>
+         </div>`
+      : (!isPurchased
+          ? `<div class="holdings-bar" style="background:rgba(255,149,0,.06);color:#c45e00">
+               📌 未購入 ｜ 目標株価 ¥${fmt(targetPrice)} ｜ 年間配当 ¥${s.annualDiv}
+             </div>`
+          : '');
+
+    let alertHtml = '';
+    if (isPurchased) {
+      const p1 = Math.round(s.cost * 0.8);
+      const p2 = Math.round(targetPrice * 0.8);
+      const sh1 = calcShares(p1, purchaseAmt);
+      const sh2 = calcShares(p2, purchaseAmt);
+      alertHtml = `
+        <div class="alerts two">
+          <div class="alert-cell">
+            <div class="a-label">追加購入① 取得-20%</div>
+            <div class="a-price">¥${fmt(p1)}</div>
+            <div class="a-shares">
+              <span class="qty">${sh1}株</span>
+              <span class="total"> 約¥${fmt(sh1*p1)}</span>
+            </div>
+          </div>
+          <div class="alert-cell">
+            <div class="a-label">追加購入② 目標-20%</div>
+            <div class="a-price">¥${fmt(p2)}</div>
+            <div class="a-shares">
+              <span class="qty">${sh2}株</span>
+              <span class="total"> 約¥${fmt(sh2*p2)}</span>
+            </div>
+          </div>
+        </div>`;
+    } else {
+      const sh = calcShares(targetPrice, purchaseAmt);
+      alertHtml = `
+        <div class="alerts one">
+          <div class="alert-cell">
+            <div class="a-label">初回購入目標価格</div>
+            <div class="a-price">¥${fmt(targetPrice)}</div>
+            <div class="a-shares">
+              <span class="qty">${sh}株</span>
+              <span class="total"> 約¥${fmt(sh*targetPrice)}</span>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    return `
+      <div class="card">
+        <div class="card-head">
+          <div class="card-left">
+            <div class="code">${s.code}</div>
+            <div class="name">${s.name}</div>
+            <div class="meta">${s.sector} ｜ 年間配当 ¥${s.annualDiv}</div>
+            ${noteHtml}
+          </div>
+          <div class="card-right">
+            ${badgeHtml}
+            ${pfBadge}
+          </div>
+        </div>
+        ${holdingsHtml}
+        <div class="divider"></div>
+        ${alertHtml}
+      </div>`;
+  }).join('');
+}
+
+// 初期表示
+render();
+</script>
+</body>
+</html>
