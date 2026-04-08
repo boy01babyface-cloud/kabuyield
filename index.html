@@ -7,6 +7,29 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="高配当アラート">
 <title>高配当株アラート確認</title>
+<script>
+(function(){
+  const HASH = "3271fe0fec7477441b6472c959e07516a7925f29ff2aa6378df36d3f62f769ab";
+  async function sha256(msg){
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(msg));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  }
+  async function check(){
+    const stored = sessionStorage.getItem("kaby_auth");
+    if(stored === HASH) return;
+    let pass = prompt("パスワードを入力してください");
+    if(pass === null){ document.body.innerHTML=""; return; }
+    const h = await sha256(pass.trim());
+    if(h !== HASH){
+      alert("パスワードが違います");
+      document.body.innerHTML="<div style='text-align:center;padding:60px;font-family:sans-serif;color:#666'>パスワードが違います。再度開いてください。</div>";
+      return;
+    }
+    sessionStorage.setItem("kaby_auth", HASH);
+  }
+  document.addEventListener("DOMContentLoaded", check);
+})();
+</script>
 <style>
 :root{
   --blue:#007AFF;--green:#34C759;--orange:#FF9500;--red:#FF3B30;
