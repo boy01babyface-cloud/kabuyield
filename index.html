@@ -1077,7 +1077,7 @@ function render() {
     let alertHtml = '';
     if (isPurchased) {
       const p1 = Math.round(s.cost * 0.8);
-      const p2 = Math.round(targetPrice * 0.8);
+      const p2 = Math.round(targetPrice);
       const sh1 = calcShares(p1, budget);
       const sh2 = calcShares(p2, budget);
       alertHtml = `
@@ -1091,7 +1091,7 @@ function render() {
             </div>
           </div>
           <div class="alert-cell">
-            <div class="a-label">追加購入② 目標-20%</div>
+            <div class="a-label">追加購入② 目標価格</div>
             <div class="a-price">¥${fmt(p2)}</div>
             <div class="a-shares">
               <span class="qty">${sh2}株</span>
