@@ -77,6 +77,14 @@ body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);c
   background-repeat:no-repeat;background-position:10px center;
 }
 
+/* ─── 並べ替え ──────────────────── */
+.sort-wrap{padding:0 12px 8px;background:var(--bg)}
+.sort-wrap select{width:100%;padding:7px 10px;border:1px solid var(--lightgray);
+  border-radius:10px;font-size:13px;color:var(--text);background:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:calc(100% - 10px) center;padding-right:28px}
+
 /* ─── カード ─────────────────────── */
 .cards{padding:4px 10px 100px}
 
@@ -156,6 +164,18 @@ body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);c
 
 <div class="search-wrap">
   <input type="search" id="searchInput" placeholder="コード・銘柄名で検索..." oninput="render()" autocomplete="off">
+</div>
+
+<div class="sort-wrap">
+  <select id="sortSelect" onchange="render()">
+    <option value="default">並べ替え：デフォルト</option>
+    <option value="code">銘柄コード（昇順）</option>
+    <option value="name">銘柄名（あいうえお順）</option>
+    <option value="sector">セクター</option>
+    <option value="yield_desc">利回り（高い順）</option>
+    <option value="target_asc">目標価格（安い順）</option>
+    <option value="cost_asc">取得単価（安い順）</option>
+  </select>
 </div>
 
 <div class="cards" id="cards"></div>
@@ -1025,6 +1045,33 @@ function render() {
       default:            return true;
     }
   });
+
+  const sortVal = document.getElementById('sortSelect').value;
+  if (sortVal !== 'default') {
+    stocks.sort((a, b) => {
+      switch (sortVal) {
+        case 'code': return a.code.localeCompare(b.code);
+        case 'name': return a.name.localeCompare(b.name, 'ja');
+        case 'sector': return a.sector.localeCompare(b.sector, 'ja');
+        case 'yield_desc': {
+          const yA = a.cost ? a.annualDiv / a.cost : (a.pdfYield || 0);
+          const yB = b.cost ? b.annualDiv / b.cost : (b.pdfYield || 0);
+          return yB - yA;
+        }
+        case 'target_asc': {
+          const tpA = a.status === 'unpurchased' ? a.annualDiv / a.pdfYield : a.annualDiv / targetYield;
+          const tpB = b.status === 'unpurchased' ? b.annualDiv / b.pdfYield : b.annualDiv / targetYield;
+          return tpA - tpB;
+        }
+        case 'cost_asc': {
+          const cA = a.cost || Infinity;
+          const cB = b.cost || Infinity;
+          return cA - cB;
+        }
+      }
+      return 0;
+    });
+  }
 
   const cards = document.getElementById('cards');
   if (stocks.length === 0) {
