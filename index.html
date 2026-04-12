@@ -1279,7 +1279,7 @@ function onCSVSelected(e) {
 
 function parseCSV(text) {
   const result = {};
-  for (const line of text.split(/?\n/)) {
+  for (const line of text.replace(/\r/g,'').split('\n')) {
     // カンマ区切り・ダブルクォート除去
     const cols = line.split(',').map(s => s.replace(/^"|"$/g, '').trim());
     // 先頭が4桁数字の行のみ処理
