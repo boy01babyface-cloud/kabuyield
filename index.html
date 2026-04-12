@@ -35,7 +35,6 @@
   --blue:#007AFF;--green:#34C759;--orange:#FF9500;--red:#FF3B30;
   --gray:#8E8E93;--lightgray:#E5E5EA;--bg:#F2F2F7;
   --card:#FFF;--text:#1C1C1E;--text2:#6C6C70;
-  --purchased:#EBF5EB;--unpurchased:#FFF8EE;--removed:#FFEEF0;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
@@ -86,11 +85,9 @@ body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);c
   background-repeat:no-repeat;background-position:calc(100% - 10px) center;padding-right:28px}
 
 /* ─── カード ─────────────────────── */
-.cards{padding:4px 10px 100px}
-
+.cards{padding:4px 10px 120px}
 .card{background:var(--card);border-radius:14px;margin-bottom:10px;
        overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-
 .card-head{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 12px 6px}
 .card-left .code{font-size:11px;color:var(--gray);font-weight:600}
 .card-left .name{font-size:16px;font-weight:700;margin-top:1px;line-height:1.3}
@@ -103,6 +100,7 @@ body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);c
 .b-unpurchased{background:#FFF3E0;color:#E65100}
 .b-removed{background:#FFEBEE;color:#C62828}
 .b-new{background:#E3F2FD;color:#0D47A1}
+.b-user{background:#F3E5F5;color:#6A1B9A}
 
 .divider{height:1px;background:var(--lightgray);margin:0 12px}
 
@@ -110,7 +108,6 @@ body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);c
 .alerts{display:grid}
 .alerts.two{grid-template-columns:1fr 1fr}
 .alerts.one{grid-template-columns:1fr}
-
 .alert-cell{padding:8px 12px;border-right:1px solid var(--lightgray)}
 .alert-cell:last-child{border-right:none}
 .a-label{font-size:10px;color:var(--gray);font-weight:600;margin-bottom:4px}
@@ -124,8 +121,17 @@ body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);c
   background:rgba(52,199,89,.08);
   padding:5px 12px;
   font-size:11px;color:#2E7D32;
-  display:flex;gap:12px;align-items:center
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap
 }
+
+/* ─── カードアクションボタン ─────── */
+.card-actions{padding:5px 12px 8px;display:flex;gap:6px;justify-content:flex-end}
+.btn-rm{border:1.5px solid var(--red);background:transparent;color:var(--red);
+  border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer}
+.btn-rv{border:1.5px solid var(--green);background:transparent;color:var(--green);
+  border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer}
+.btn-del{border:1.5px solid var(--gray);background:transparent;color:var(--gray);
+  border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer}
 
 /* ─── 空状態 ─────────────────────── */
 .empty{text-align:center;padding:60px 20px;color:var(--gray)}
@@ -133,13 +139,42 @@ body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);c
 
 /* ─── フッター ───────────────────── */
 .footer{text-align:center;padding:16px;font-size:10px;color:var(--gray)}
+
+/* ─── フローティングボタン ──────── */
+.fab-area{position:fixed;bottom:24px;right:16px;display:flex;flex-direction:column;
+  gap:10px;z-index:300}
+.fab{border:none;border-radius:50px;padding:12px 18px;font-size:13px;font-weight:700;
+  cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.25);display:flex;align-items:center;
+  gap:6px;white-space:nowrap}
+.fab-add{background:var(--blue);color:#fff}
+.fab-csv{background:#28a745;color:#fff}
+
+/* ─── モーダル ───────────────────── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;
+  display:flex;align-items:flex-end}
+.overlay.hidden{display:none}
+.modal{background:#fff;border-radius:20px 20px 0 0;width:100%;
+  padding:20px 16px calc(env(safe-area-inset-bottom,0px) + 28px);
+  max-height:92vh;overflow-y:auto}
+.modal h2{font-size:17px;font-weight:700;margin-bottom:16px}
+.mf{margin-bottom:13px}
+.mf label{font-size:12px;color:var(--gray);margin-bottom:5px;display:block;font-weight:600}
+.mf input,.mf select{width:100%;border:1.5px solid var(--lightgray);border-radius:10px;
+  padding:10px 12px;font-size:15px;color:var(--text);background:#fff;
+  -webkit-appearance:none}
+.mf input:focus,.mf select:focus{outline:none;border-color:var(--blue)}
+.modal-btns{display:flex;gap:8px;margin-top:18px}
+.btn-ok{flex:1;background:var(--blue);color:#fff;border:none;border-radius:10px;
+  padding:13px;font-size:15px;font-weight:700;cursor:pointer}
+.btn-ng{flex:1;background:var(--lightgray);color:var(--text2);border:none;border-radius:10px;
+  padding:13px;font-size:15px;font-weight:600;cursor:pointer}
 </style>
 </head>
 <body>
 
 <div class="hdr">
   <h1>📊 高配当株アラート確認</h1>
-  <div class="sub" id="subtitle">2026年4月更新 ｜ 全58銘柄</div>
+  <div class="sub" id="subtitle">読み込み中...</div>
 </div>
 
 <div class="settings">
@@ -181,8 +216,57 @@ body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);c
 <div class="cards" id="cards"></div>
 <div class="footer">年間配当データ：kabutan.jp 2026年4月調査</div>
 
+<!-- SBI CSV 読み込み用 hidden input -->
+<input type="file" id="csvFile" accept=".csv" style="display:none" onchange="onCSVSelected(event)">
+
+<!-- フローティングボタン -->
+<div class="fab-area">
+  <button class="fab fab-csv" onclick="document.getElementById('csvFile').click()">📥 SBI CSV</button>
+  <button class="fab fab-add" onclick="openAddModal()">＋ 銘柄追加</button>
+</div>
+
+<!-- 銘柄追加モーダル -->
+<div class="overlay hidden" id="addOverlay">
+  <div class="modal">
+    <h2>銘柄を追加</h2>
+    <div class="mf">
+      <label>銘柄コード（4桁）</label>
+      <input type="tel" id="m_code" placeholder="例: 1234" maxlength="4" inputmode="numeric">
+    </div>
+    <div class="mf">
+      <label>銘柄名</label>
+      <input type="text" id="m_name" placeholder="例: ○○HD">
+    </div>
+    <div class="mf">
+      <label>セクター</label>
+      <select id="m_sector">
+        <option>卸売</option><option>小売</option><option>化学</option>
+        <option>銀行</option><option>保険</option><option>その他金融</option>
+        <option>電気機器</option><option>精密機器</option><option>不動産</option>
+        <option>サービス</option><option>情報・通信</option><option>食料品</option>
+        <option>建設</option><option>機械</option><option>倉庫・運輸関連</option>
+        <option>金属製品</option><option>その他製品</option><option>医薬品</option>
+        <option>J-REIT市場</option><option>ガラス・土石</option><option>電気・ガス</option>
+        <option>その他</option>
+      </select>
+    </div>
+    <div class="mf">
+      <label>年間配当（1株・円）</label>
+      <input type="number" id="m_div" placeholder="例: 100" min="0" step="0.5" inputmode="decimal">
+    </div>
+    <div class="mf">
+      <label>メモ（任意）</label>
+      <input type="text" id="m_note" placeholder="">
+    </div>
+    <div class="modal-btns">
+      <button class="btn-ng" onclick="closeAddModal()">キャンセル</button>
+      <button class="btn-ok" onclick="confirmAdd()">追加</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const STOCKS = [
+const BASE_STOCKS = [
   {
     "code": "9986",
     "name": "蔵王産業",
@@ -196,7 +280,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "3076",
@@ -211,7 +296,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "8130",
@@ -226,7 +312,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "2659",
@@ -241,7 +328,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "3333",
@@ -256,7 +344,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "4008",
@@ -271,7 +360,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "4042",
@@ -286,7 +376,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "4097",
@@ -301,7 +392,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": 0.0359,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "4958",
@@ -316,7 +408,8 @@ const STOCKS = [
     "removed": false,
     "isNew": true,
     "pdfYield": 0.0347,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "8309",
@@ -331,7 +424,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "8725",
@@ -346,7 +440,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "8584",
@@ -361,7 +456,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "6785",
@@ -376,7 +472,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "7723",
@@ -391,7 +488,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "3231",
@@ -406,7 +504,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "3003",
@@ -421,7 +520,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "2169",
@@ -436,7 +536,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "9757",
@@ -451,7 +552,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "9769",
@@ -466,7 +568,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "4641",
@@ -481,7 +584,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "3817",
@@ -496,7 +600,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "3901",
@@ -511,7 +616,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "4674",
@@ -526,7 +632,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "4746",
@@ -541,7 +648,8 @@ const STOCKS = [
     "removed": false,
     "isNew": true,
     "pdfYield": 0.0408,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "2003",
@@ -556,7 +664,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "1928",
@@ -571,7 +680,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "6345",
@@ -586,7 +696,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "9364",
@@ -601,7 +712,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "9381",
@@ -616,7 +728,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "7989",
@@ -631,7 +744,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "7820",
@@ -646,7 +760,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 6000
+    "investAmount": 6000,
+    "userAdded": false
   },
   {
     "code": "7994",
@@ -661,7 +776,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "4540",
@@ -676,7 +792,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 9000
+    "investAmount": 9000,
+    "userAdded": false
   },
   {
     "code": "1343",
@@ -691,7 +808,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": 39000
+    "investAmount": 39000,
+    "userAdded": false
   },
   {
     "code": "1414",
@@ -706,7 +824,8 @@ const STOCKS = [
     "removed": true,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "1951",
@@ -721,7 +840,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "2124",
@@ -736,7 +856,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "2296",
@@ -751,7 +872,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "2393",
@@ -766,7 +888,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "3834",
@@ -781,7 +904,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "4205",
@@ -796,7 +920,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "4248",
@@ -811,7 +936,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "4719",
@@ -826,7 +952,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "4972",
@@ -841,7 +968,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "5388",
@@ -856,7 +984,8 @@ const STOCKS = [
     "removed": true,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "6073",
@@ -871,7 +1000,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "6432",
@@ -886,7 +1016,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "6458",
@@ -901,7 +1032,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "7438",
@@ -916,7 +1048,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "8058",
@@ -931,7 +1064,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "8593",
@@ -946,7 +1080,8 @@ const STOCKS = [
     "removed": true,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "9303",
@@ -961,7 +1096,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "9304",
@@ -976,7 +1112,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "9513",
@@ -991,7 +1128,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "9687",
@@ -1006,7 +1144,8 @@ const STOCKS = [
     "removed": false,
     "isNew": false,
     "pdfYield": null,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "4832",
@@ -1021,7 +1160,8 @@ const STOCKS = [
     "removed": false,
     "isNew": true,
     "pdfYield": 0.045,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "8306",
@@ -1036,7 +1176,8 @@ const STOCKS = [
     "removed": false,
     "isNew": true,
     "pdfYield": 0.045,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   },
   {
     "code": "8316",
@@ -1051,12 +1192,181 @@ const STOCKS = [
     "removed": false,
     "isNew": true,
     "pdfYield": 0.045,
-    "investAmount": null
+    "investAmount": null,
+    "userAdded": false
   }
 ];
 
-let currentFilter = 'all';
+// ── LocalStorage キー ───────────────────────────────────────────
+const LS_SBI      = 'kaby_sbi';       // {code: {shares,cost,current}}
+const LS_SBI_DATE = 'kaby_sbi_date';  // "4/13" など
+const LS_REMOVED  = 'kaby_removed';   // [code, ...]  ユーザーが除外
+const LS_RESTORED = 'kaby_restored';  // [code, ...]  ユーザーが復活
+const LS_USER     = 'kaby_user';      // [{...stockFields}]  ユーザー追加
 
+function getSBI()        { return JSON.parse(localStorage.getItem(LS_SBI)      || '{}'); }
+function getRemoved()    { return JSON.parse(localStorage.getItem(LS_REMOVED)  || '[]'); }
+function getRestored()   { return JSON.parse(localStorage.getItem(LS_RESTORED) || '[]'); }
+function getUserStocks() { return JSON.parse(localStorage.getItem(LS_USER)     || '[]'); }
+
+// ── データマージ ─────────────────────────────────────────────────
+function getStocks() {
+  const sbi      = getSBI();
+  const removed  = getRemoved();
+  const restored = getRestored();
+  const userList = getUserStocks();
+
+  // ベースデータをディープコピー
+  let stocks = BASE_STOCKS.map(s => ({...s}));
+
+  // SBIデータで取得単価・株数・現在値を上書き
+  stocks.forEach(s => {
+    if (sbi[s.code]) {
+      s.shares  = sbi[s.code].shares;
+      s.cost    = sbi[s.code].cost;
+      s.current = sbi[s.code].current;
+      if (s.status === 'unpurchased' && s.shares > 0) s.status = 'purchased';
+    }
+  });
+
+  // 除外/復活オーバーライド
+  stocks.forEach(s => {
+    if (removed.includes(s.code))  s.removed = true;
+    if (restored.includes(s.code)) s.removed = false;
+  });
+
+  // ユーザー追加銘柄（重複スキップ）
+  const existCodes = new Set(stocks.map(s => s.code));
+  userList.forEach(u => {
+    if (existCodes.has(u.code)) return;
+    const us = {...u};
+    if (sbi[us.code]) {
+      us.shares  = sbi[us.code].shares;
+      us.cost    = sbi[us.code].cost;
+      us.current = sbi[us.code].current;
+      if (us.status === 'unpurchased' && us.shares > 0) us.status = 'purchased';
+    }
+    if (removed.includes(us.code))  us.removed = true;
+    if (restored.includes(us.code)) us.removed = false;
+    stocks.push(us);
+  });
+
+  return stocks;
+}
+
+// ── CSV インポート ────────────────────────────────────────────────
+function onCSVSelected(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const text = new TextDecoder('shift-jis').decode(ev.target.result);
+    const sbi = parseCSV(text);
+    const count = Object.keys(sbi).length;
+    if (count === 0) {
+      alert('銘柄データが見つかりませんでした。\nSBI証券の保有銘柄一覧CSVを選択してください。');
+      return;
+    }
+    localStorage.setItem(LS_SBI, JSON.stringify(sbi));
+    const d = new Date();
+    localStorage.setItem(LS_SBI_DATE, `${d.getMonth()+1}/${d.getDate()}`);
+    render();
+    alert(`SBIデータを読み込みました（${count}銘柄）`);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function parseCSV(text) {
+  const result = {};
+  for (const line of text.split(/?\n/)) {
+    // カンマ区切り・ダブルクォート除去
+    const cols = line.split(',').map(s => s.replace(/^"|"$/g, '').trim());
+    // 先頭が4桁数字の行のみ処理
+    if (!/^\d{4}$/.test(cols[0])) continue;
+    const shares  = parseFloat(cols[2]);
+    const cost    = parseFloat(cols[4]);
+    const current = parseFloat(cols[5]);
+    if (shares > 0 && cost > 0) {
+      result[cols[0]] = { shares, cost, current: isNaN(current) ? cost : current };
+    }
+  }
+  return result;
+}
+
+// ── 銘柄追加モーダル ──────────────────────────────────────────────
+function openAddModal() {
+  document.getElementById('addOverlay').classList.remove('hidden');
+  document.getElementById('m_code').focus();
+}
+function closeAddModal() {
+  document.getElementById('addOverlay').classList.add('hidden');
+  ['m_code','m_name','m_div','m_note'].forEach(id => document.getElementById(id).value = '');
+}
+function confirmAdd() {
+  const code   = document.getElementById('m_code').value.trim();
+  const name   = document.getElementById('m_name').value.trim();
+  const sector = document.getElementById('m_sector').value;
+  const div    = parseFloat(document.getElementById('m_div').value);
+  const note   = document.getElementById('m_note').value.trim();
+
+  if (!/^\d{4}$/.test(code)) { alert('銘柄コードは4桁の数字で入力してください'); return; }
+  if (!name)                    { alert('銘柄名を入力してください'); return; }
+  if (isNaN(div) || div <= 0)  { alert('年間配当を正しく入力してください'); return; }
+
+  // 重複チェック
+  if (getStocks().some(s => s.code === code)) {
+    alert(`コード ${code} はすでに登録されています`);
+    return;
+  }
+
+  const newStock = {
+    code, name, sector,
+    inPortfolio: false,
+    status: 'unpurchased',
+    annualDiv: div,
+    cost: null, shares: null, current: null,
+    note: note || '',
+    removed: false,
+    isNew: true,
+    pdfYield: null,
+    investAmount: null,
+    userAdded: true,
+  };
+
+  const userList = getUserStocks();
+  userList.push(newStock);
+  localStorage.setItem(LS_USER, JSON.stringify(userList));
+  closeAddModal();
+  render();
+}
+
+// ── 除外 / 復活 / ユーザー銘柄削除 ──────────────────────────────
+function removeStock(code) {
+  if (!confirm(`${code} を除外済にしますか？`)) return;
+  const rm = getRemoved();
+  if (!rm.includes(code)) { rm.push(code); localStorage.setItem(LS_REMOVED, JSON.stringify(rm)); }
+  const rv = getRestored().filter(c => c !== code);
+  localStorage.setItem(LS_RESTORED, JSON.stringify(rv));
+  render();
+}
+function restoreStock(code) {
+  if (!confirm(`${code} の除外を解除しますか？`)) return;
+  const rv = getRestored();
+  if (!rv.includes(code)) { rv.push(code); localStorage.setItem(LS_RESTORED, JSON.stringify(rv)); }
+  const rm = getRemoved().filter(c => c !== code);
+  localStorage.setItem(LS_REMOVED, JSON.stringify(rm));
+  render();
+}
+function deleteUserStock(code) {
+  if (!confirm(`${code} を削除しますか？`)) return;
+  const list = getUserStocks().filter(u => u.code !== code);
+  localStorage.setItem(LS_USER, JSON.stringify(list));
+  render();
+}
+
+// ── フィルター ────────────────────────────────────────────────────
+let currentFilter = 'all';
 function setFilter(f, btn) {
   currentFilter = f;
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
@@ -1064,26 +1374,33 @@ function setFilter(f, btn) {
   render();
 }
 
-function fmt(n) {
-  return Math.round(n).toLocaleString('ja-JP');
-}
+function fmt(n) { return Math.round(n).toLocaleString('ja-JP'); }
+function calcShares(price, amount) { return Math.max(1, Math.round(amount / price)); }
 
-function calcShares(price, amount) {
-  return Math.max(1, Math.round(amount / price));
-}
-
+// ── メインレンダリング ────────────────────────────────────────────
 function render() {
   const targetYield = parseFloat(document.getElementById('yieldInput').value) / 100 || 0.045;
   const purchaseAmt  = parseFloat(document.getElementById('amountInput').value) * 10000 || 50000;
   const q = document.getElementById('searchInput').value.toLowerCase();
 
-  let stocks = STOCKS.filter(s => {
+  const allStocks = getStocks();
+  const userCodes = new Set(getUserStocks().map(u => u.code));
+
+  // サブタイトル更新
+  const sbiDate   = localStorage.getItem(LS_SBI_DATE) || '';
+  const userCount = getUserStocks().length;
+  let sub = `全${allStocks.length}銘柄`;
+  if (sbiDate)    sub += ` ｜ SBI: ${sbiDate}読込済`;
+  if (userCount)  sub += ` ｜ 追加: ${userCount}銘柄`;
+  document.getElementById('subtitle').textContent = sub;
+
+  let stocks = allStocks.filter(s => {
     const matchSearch = !q || s.code.includes(q) || s.name.toLowerCase().includes(q) ||
                         s.sector.toLowerCase().includes(q);
     if (!matchSearch) return false;
     switch (currentFilter) {
       case 'portfolio':   return s.inPortfolio;
-      case 'sbi_only':    return !s.inPortfolio;
+      case 'sbi_only':    return !s.inPortfolio && !s.userAdded;
       case 'unpurchased': return s.status === 'unpurchased';
       case 'purchased':   return s.status === 'purchased' && !s.removed;
       case 'removed':     return s.removed;
@@ -1104,14 +1421,12 @@ function render() {
           return yB - yA;
         }
         case 'target_asc': {
-          const tpA = a.status === 'unpurchased' ? a.annualDiv / a.pdfYield : a.annualDiv / targetYield;
-          const tpB = b.status === 'unpurchased' ? b.annualDiv / b.pdfYield : b.annualDiv / targetYield;
+          const tpA = (a.status==='unpurchased' && a.pdfYield) ? a.annualDiv/a.pdfYield : a.annualDiv/targetYield;
+          const tpB = (b.status==='unpurchased' && b.pdfYield) ? b.annualDiv/b.pdfYield : b.annualDiv/targetYield;
           return tpA - tpB;
         }
         case 'cost_asc': {
-          const cA = a.cost || Infinity;
-          const cB = b.cost || Infinity;
-          return cA - cB;
+          return (a.cost || Infinity) - (b.cost || Infinity);
         }
       }
       return 0;
@@ -1125,34 +1440,34 @@ function render() {
   }
 
   cards.innerHTML = stocks.map(s => {
-    // 未購入はPDF利回り基準、購入済は目標利回り基準
-    const targetPrice = s.status === 'unpurchased'
+    // 目標株価（未購入はPDF利回り or 目標利回りで計算）
+    const targetPrice = (s.status === 'unpurchased' && s.pdfYield)
       ? Math.round(s.annualDiv / s.pdfYield)
       : Math.round(s.annualDiv / targetYield);
     const isPurchased = s.status === 'purchased';
 
-    // badge
+    // ステータスバッジ
     let badgeHtml = '';
-    if (s.removed) badgeHtml += '<span class="badge b-removed">除外済</span>';
-    else if (s.isNew) badgeHtml += '<span class="badge b-new">★新規</span>';
+    if (s.removed)       badgeHtml += '<span class="badge b-removed">除外済</span>';
+    else if (s.userAdded) badgeHtml += '<span class="badge b-user">手動追加</span>';
+    else if (s.isNew)    badgeHtml += '<span class="badge b-new">★新規</span>';
     else if (isPurchased) badgeHtml += '<span class="badge b-purchased">購入済</span>';
-    else badgeHtml += '<span class="badge b-unpurchased">未購入</span>';
+    else                 badgeHtml += '<span class="badge b-unpurchased">未購入</span>';
 
-    // portfolio badge
+    // PF/SBIバッジ
     const pfBadge = s.inPortfolio
       ? '<span class="badge" style="background:#EDE7F6;color:#4527A0">PF</span>'
       : '<span class="badge" style="background:#F3F3F3;color:#777">SBI</span>';
 
-    const noteHtml = s.note
-      ? `<div class="note">⚠︎ ${s.note}</div>` : '';
+    const noteHtml = s.note ? `<div class="note">⚠︎ ${s.note}</div>` : '';
 
-    // 購入予算：PF銘柄はPDF投資額×5、SBI銘柄はグローバル設定
+    // 購入予算
     const budget = s.investAmount != null ? s.investAmount * 5 : purchaseAmt;
     const budgetLabel = s.investAmount != null
       ? `購入予算 ¥${fmt(budget)}（PDF ${fmt(s.investAmount)}×5）`
       : `購入予算 ¥${fmt(budget)}`;
 
-    // holdings bar (for purchased)
+    // 保有情報バー
     const holdingsHtml = isPurchased && s.shares
       ? `<div class="holdings-bar">
            <span>📦 現在 <strong>${s.shares}株</strong> 保有</span>
@@ -1166,6 +1481,7 @@ function render() {
              </div>`
           : '');
 
+    // アラートセル
     let alertHtml = '';
     if (isPurchased) {
       const p1 = Math.round(s.cost * 0.8);
@@ -1206,6 +1522,22 @@ function render() {
         </div>`;
     }
 
+    // アクションボタン
+    let actionHtml;
+    if (userCodes.has(s.code)) {
+      actionHtml = `<div class="card-actions">
+        <button class="btn-del" onclick="deleteUserStock('${s.code}')">削除</button>
+      </div>`;
+    } else if (s.removed) {
+      actionHtml = `<div class="card-actions">
+        <button class="btn-rv" onclick="restoreStock('${s.code}')">除外解除</button>
+      </div>`;
+    } else {
+      actionHtml = `<div class="card-actions">
+        <button class="btn-rm" onclick="removeStock('${s.code}')">除外</button>
+      </div>`;
+    }
+
     return `
       <div class="card">
         <div class="card-head">
@@ -1223,6 +1555,7 @@ function render() {
         ${holdingsHtml}
         <div class="divider"></div>
         ${alertHtml}
+        ${actionHtml}
       </div>`;
   }).join('');
 }
